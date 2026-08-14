@@ -1,4 +1,8 @@
-name: "Terraform"
+name: Setup Terraform
+uses: hashicorp/setup-terraform@v1
+with:
+  terraform_version: 1.6.0  # Update from 1.0.1 to a newer stable version
+  terraform_wrapper: false
 
 on:
   push:
