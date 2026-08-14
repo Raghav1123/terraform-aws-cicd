@@ -1,8 +1,4 @@
 name: "Terraform"
-uses: hashicorp/setup-terraform@v1
-with:
-  terraform_version: 1.15.8  # Update from 1.0.1 to a newer stable version
-  terraform_wrapper: false
 
 on:
   push:
@@ -15,30 +11,37 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
     defaults:
       run:
-        working-directory: terraform
+        working-directory: src
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.0.1
+          terraform_version: latest
           terraform_wrapper: false
+
+      - name: Check Terraform Version
+        run: terraform version
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check
+        run: terraform fmt -check -recursive
 
       - name: Terraform Init
         id: init
         run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
 
       - name: Terraform Plan
         id: plan
